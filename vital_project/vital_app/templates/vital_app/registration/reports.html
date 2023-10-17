@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background-color: #3498db;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 40px; /* Adjust the width to fit your logo size */
+            height: auto;
+            margin-right: 10px;
+        }
+        a.black-button {
+    background-color: #000000; /* Set the background color to black */
+    color: #fff !important; /* Set the text color to white */
+    text-decoration: none; /* Remove underline on anchor tag */
+}
+
+
+
+        .header-buttons {
+            display: flex;
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #ffffff;
+            color: #c4c4c4;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+}
+
+
+        /* Add more styles for your report content as needed */
+        .report-content {
+            padding: 20px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">
+        <!-- You can add your logo here if needed -->
+        Reports
+    </div>
+    <div class="header-buttons">
+        <a class="button black-button" href="{% url 'summary' %}">Back to Home</a>
+    </div>
+    
+</div>
+
+<div class="report-content">
+    <h2>Download Reports</h2>
+    <p>This section is to download reports below, based on vehicle status:</p>
+
+    <div class="report-buttons">
+        <button class="button download-button"><a href="{% url 'download_report' status='available' %}">Download Available Vehicles Report</a></button>
+        <button class="button download-button"><a href="{% url 'download_report' status='hired_out' %}">Download Hired Out Vehicles Report</a></button>
+        <button class="button download-button"><a href="{% url 'download_report' status='workshop' %}">Download Vehicles in Workshop Report</a></button>
+    </div>
+</div>
+
+</body>
+</html>

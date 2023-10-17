@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #3498db;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 40px; /* Adjust the width to fit your logo size */
+            height: auto;
+            margin-right: 10px;
+        }
+
+        .header-buttons {
+            display: flex;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: #000000;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .filter-dropdown {
+            display: inline-block;
+        }
+
+        .dropdown-label {
+            padding: 10px 20px;
+            background-color: #0f222e;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            border: 1px solid #ddd;
+            z-index: 1;
+        }
+
+        .dropdown-content label {
+            display: block;
+            padding: 10px 20px;
+            color: black;
+        }
+
+        .filter-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-container label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .search-container input {
+            padding: 5px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .status-indicator {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .status-indicator.available {
+            background-color: green;
+        }
+
+        .status-indicator.workshop {
+            background-color: orange;
+        }
+
+        .status-indicator.hired_out {
+            background-color: red;
+        }
+    </style>
+    <Div class="header">
+    <div class="logo">
+        Trucks
+    </div>
+    <div class="header-buttons">
+    </div>
+    <div class="filter-dropdown">
+        <div class="dropdown-label" id="dropdown-label">Filter Options</div>
+        <div class="dropdown-content">
+            <label><input type="checkbox" value="fleet_no" checked> Fleet Number</label>
+            <label><input type="checkbox" value="cost_centre" checked> Cost Centre</label>
+            <label><input type="checkbox" value="reg_no" checked> Registration Number</label>
+            <label><input type="checkbox" value="category" checked> Category</label>
+            <label><input type="checkbox" value="group" checked> Group</label>
+            <label><input type="checkbox" value="body_type" checked> Body Type</label>
+            <label><input type="checkbox" value="status" checked> Status</label>
+            <label><input type="checkbox" value="area_available" checked> Area Available</label>
+
+        </div>
+    </div>
+    <div class="search-container">
+        <label for="search">Search:</label>
+        <input type="text" name="search" id="search" placeholder="Search..." oninput="filterTable()">
+    </div>
+</div>
+
+<h2>Vehicle Data</h2>
+<div class="data-table">
+    <table>
+        <thead>
+            <tr>
+                <th id="fleet_no-header">Fleet Number</th>
+                <th id="cost_centre-header">Cost Centre</th>
+                <th id="reg_no-header">Registration Number</th>
+                <th id="category-header">Category</th>
+                <th id="group-header">Group</th>
+                <th id="body_type-header">Body Type</th>
+                <th id="status-header">Status</th>
+                <th id="area_available-header">Area Available</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vehicle in vehicles %}
+            <tr>
+                <td data-field="fleet_no">{{ vehicle.fleet_no }}</td>
+                <td data-field="cost_centre">{{ vehicle.cost_centre }}</td>
+                <td data-field="reg_no">{{ vehicle.reg_no }}</td>
+                <td data-field="category">{{ vehicle.category }}</td>
+                <td data-field="group">{{ vehicle.group }}</td>
+                <td data-field="body_type">{{ vehicle.body_type }}</td>
+                <td data-field="status">
+                    <select class="status-dropdown" data-vehicle-id="{{ vehicle.reg_no }}">
+                        <option value="available" {% if vehicle.status == "available" %}selected{% endif %}>available</option>
+                        <option value="workshop" {% if vehicle.status == "workshop" %}selected{% endif %}>workshop</option>
+                        <option value="hired_out" {% if vehicle.status == "hired_out" %}selected{% endif %}>hired_out</option>
+                    </select>
+                </td>
+                <td data-field="area_available">{{ vehicle.area_available }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+
+<script>
+    // JavaScript for toggling column visibility
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkboxes = document.querySelectorAll('.dropdown-content input');
+        const dropdownLabel = document.getElementById('dropdown-label');
+    
+        dropdownLabel.addEventListener('click', function (event) {
+            event.stopPropagation();
+            dropdownLabel.classList.toggle('active');
+        });
+    
+        document.addEventListener('click', function () {
+            dropdownLabel.classList.remove('active');
+        });
+    
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const selectedColumns = Array.from(checkboxes)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
+    
+                const dataRows = document.querySelectorAll('.data-table tbody tr');
+    
+                dataRows.forEach(row => {
+                    Array.from(row.children).forEach(cell => {
+                        const dataField = cell.getAttribute('data-field');
+                        const header = document.getElementById(dataField + '-header');
+                        
+                        if (selectedColumns.includes(dataField)) {
+                            cell.style.display = 'table-cell';
+                            header.style.display = 'table-cell';
+                        } else {
+                            cell.style.display = 'none';
+                            header.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    });
+    
+    
+        // JavaScript for filtering the table based on the search input
+        function filterTable() {
+            const searchInput = document.getElementById('search');
+            const filter = searchInput.value.toLowerCase();
+            const dataRows = document.querySelectorAll('.data-table table tbody tr');
+    
+            dataRows.forEach(row => {
+                const cells = row.getElementsByTagName('td');
+                let rowVisible = false;
+    
+                for (let i = 0; i < cells.length; i++) {
+                    const cell = cells[i];
+                    if (cell.textContent.toLowerCase().includes(filter)) {
+                        rowVisible = true;
+                        break;
+                    }
+                }
+    
+                if (rowVisible) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
+    </html>
+    
+    
+    <script>
+        // JavaScript for updating the status
+        const statusDropdowns = document.querySelectorAll('.status-dropdown');
+        statusDropdowns.forEach((dropdown) => {
+            dropdown.addEventListener('change', (event) => {
+                const vehicleId = event.currentTarget.getAttribute('data-vehicle-id');
+                const newStatus = event.currentTarget.value;
+
+                fetch(`/vital_app/update_status/${vehicleId}/${newStatus}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert(data.error);
+                    }
+                });
+            });
+        });
+    
+    
+    
+    </script>
+    
+    </body>
+    </html>
+    

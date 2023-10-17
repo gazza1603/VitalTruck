@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vehicle Status Graphs</title>
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chart-wrapper {
+            width: 30%; /* Adjust this value to desired size */
+            background: #fff;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        }
+        .status-headings {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .status-item {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-wrapper">
+        <div class="status-headings">
+            <div class="status-item">
+                Available: {{ available_count }}
+            </div>
+            <div class="status-item">
+                Hired Out: {{ hired_out_count }}
+            </div>
+            <div class="status-item">
+                Workshop: {{ workshop_count }}
+            </div>
+        </div>
+        <canvas id="statusChart"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('statusChart').getContext('2d');
+
+        const gradient1 = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient1.addColorStop(0, 'rgba(75, 192, 192, 0.6)');
+        gradient1.addColorStop(1, 'rgba(75, 192, 192, 1)');
+
+        const gradient2 = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient2.addColorStop(0, 'rgba(255, 159, 64, 0.6)');
+        gradient2.addColorStop(1, 'rgba(255, 159, 64, 1)');
+
+        const gradient3 = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient3.addColorStop(0, 'rgba(255, 99, 132, 0.6)');
+        gradient3.addColorStop(1, 'rgba(255, 99, 132, 1)');
+
+        const data = {
+            labels: ['Available', 'Hired Out', 'Workshop'],
+            datasets: [{
+                label: 'Vehicle Status',
+                data: [{{ available_count }}, {{ hired_out_count }}, {{ workshop_count }}],
+                backgroundColor: [gradient1, gradient2, gradient3],
+                borderColor: ['#4BC0C0', '#FF9F40', '#FF6384'],
+                borderWidth: 1,
+                hoverOffset: 4  // for slight expansion on hover
+            }]
+        };
+
+        const config = {
+            type: 'pie',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            padding: 20,
+                            boxWidth: 40,
+                            font: {
+                                size: 14,
+                                style: 'bold'
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Vehicle Status',
+                        font: {
+                            size: 24
+                        },
+                        padding: 30
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            },
+        };
+
+        const statusChart = new Chart(ctx, config);
+    </script>
+</body>
+</html>
